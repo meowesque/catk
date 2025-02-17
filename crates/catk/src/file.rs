@@ -22,7 +22,7 @@ pub struct FileId(pub(crate) u64);
 #[derive(Debug, Clone)]
 pub struct FileRef {
   pub id: FileId,
-  pub file: Rc<File>,
+  pub inner: Rc<File>,
 }
 
 #[derive(Debug, Clone)]

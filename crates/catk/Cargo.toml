@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-lasso = { version = "0.7.3", features = ["multi-threaded"] }
+peg = "0.8.4"
