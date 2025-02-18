@@ -4,11 +4,15 @@ use std::{cell::RefCell, collections::HashMap, path::PathBuf, rc::Rc};
 #[derive(Debug, Clone, Copy)]
 pub struct SourceId(pub(crate) u64);
 
+/// Offset within a source file.
 #[derive(Debug, Clone, Default)]
-pub struct Position {
-  pub line: u32,
-  pub column: u32,
-  pub offset: usize,
+pub struct Position(pub usize);
+
+impl From<usize> for Position {
+  #[inline]
+  fn from(value: usize) -> Self {
+    Self(value)
+  }
 }
 
 impl std::fmt::Display for Position {
@@ -18,22 +22,32 @@ impl std::fmt::Display for Position {
 }
 
 #[derive(Debug)]
-pub struct Location {
+pub struct PositionRef {
   pub source: SourceRef,
   pub position: Position,
 }
 
-impl std::fmt::Display for Location {
+impl std::fmt::Display for PositionRef {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     todo!()
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Region {
+pub struct RegionRef {
   pub source: SourceRef,
   pub begin: Position,
   pub end: Position,
+}
+
+impl RegionRef {
+  pub fn new(source: SourceRef, begin: impl Into<Position>, end: impl Into<Position>) -> Self {
+    Self {
+      source,
+      begin: begin.into(),
+      end: end.into(),
+    }
+  }
 }
 
 #[derive(Debug, Clone)]
@@ -69,16 +83,21 @@ impl peg::Parse for Source {
     p >= self.file.inner.content.len()
   }
 
+  #[inline]
   fn position_repr<'input>(&'input self, offset: usize) -> Self::PositionRepr {
+    /*
     let before = &self.file.inner.content[..offset];
     let line = before.as_bytes().iter().filter(|&&c| c == b'\n').count() + 1;
     let column = before.chars().rev().take_while(|&c| c != '\n').count() + 1;
+    */
 
-    Self::PositionRepr {
-      line: line as u32,
-      column: column as u32,
-      offset,
-    }
+    Position(offset)
+  }
+}
+
+impl peg::ParseLiteral for Source {
+  fn parse_string_literal(&self, pos: usize, literal: &str) -> peg::RuleResult<()> {
+    self.file.inner.content.parse_string_literal(pos, literal)
   }
 }
 
@@ -89,7 +108,7 @@ pub struct SourceRef {
 }
 
 impl peg::Parse for SourceRef {
-  type PositionRepr = Location;
+  type PositionRepr = PositionRef;
 
   #[inline]
   fn start<'input>(&'input self) -> usize {
@@ -101,11 +120,18 @@ impl peg::Parse for SourceRef {
     p >= self.inner.file.inner.content.len()
   }
 
+  #[inline]
   fn position_repr<'input>(&'input self, offset: usize) -> Self::PositionRepr {
     Self::PositionRepr {
       source: self.clone(),
       position: self.inner.position_repr(offset),
     }
+  }
+}
+
+impl peg::ParseLiteral for SourceRef {
+  fn parse_string_literal(&self, pos: usize, literal: &str) -> peg::RuleResult<()> {
+    self.inner.parse_string_literal(pos, literal)
   }
 }
 
