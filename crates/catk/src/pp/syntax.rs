@@ -30,6 +30,11 @@ impl IncludePath {
   }
 }
 
+pub enum DefineDirectiveParameter {
+  Name(String),
+  VaArgs,
+}
+
 #[derive(Debug)]
 pub struct BeforeMacroExpansion {
   pub region: source::RegionRef,
@@ -55,6 +60,8 @@ pub enum Item {
   },
   Definition {
     region: source::RegionRef,
+    parameters: Option<Vec<DefineDirectiveParameter>>,
+    
   },
   IncludeExpansion {
     before: BeforeIncludeExpansion,

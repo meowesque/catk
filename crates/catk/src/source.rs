@@ -101,6 +101,14 @@ impl peg::ParseLiteral for Source {
   }
 }
 
+impl<'input> peg::ParseElem<'input> for Source {
+  type Element = char;
+
+  fn parse_elem(&'input self, pos: usize) -> peg::RuleResult<Self::Element> {
+    self.file.inner.content.parse_elem(pos)
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct SourceRef {
   pub id: SourceId,
@@ -132,6 +140,14 @@ impl peg::Parse for SourceRef {
 impl peg::ParseLiteral for SourceRef {
   fn parse_string_literal(&self, pos: usize, literal: &str) -> peg::RuleResult<()> {
     self.inner.parse_string_literal(pos, literal)
+  }
+}
+
+impl<'input> peg::ParseElem<'input> for SourceRef {
+  type Element = char;
+
+  fn parse_elem(&'input self, pos: usize) -> peg::RuleResult<Self::Element> {
+    self.inner.parse_elem(pos)
   }
 }
 
