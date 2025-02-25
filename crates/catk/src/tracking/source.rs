@@ -1,4 +1,4 @@
-use crate::file::{FileManager, FileRef};
+use crate::tracking::file::{FileManager, FileRef};
 use std::{cell::RefCell, collections::HashMap, path::PathBuf, rc::Rc};
 
 #[derive(Debug, Clone, Copy)]
