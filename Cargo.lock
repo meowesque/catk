@@ -5,10 +5,16 @@ version = 4
 [[package]]
 name = "ca"
 version = "0.1.0"
+dependencies = [
+ "catk",
+]
 
 [[package]]
 name = "cals"
 version = "0.1.0"
+dependencies = [
+ "catk",
+]
 
 [[package]]
 name = "catk"
