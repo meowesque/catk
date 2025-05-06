@@ -1,5 +1,8 @@
 # catk: C Analysis Toolkit
 
+> [!WARNING]
+> Currently in development, links may be broken.
+
 Performant and extensible analysis toolkit for formally verifying C99 (and newer) programs. 
 
 ![xkcd-compiler_complaint](resources/compiler_complaint.png)
